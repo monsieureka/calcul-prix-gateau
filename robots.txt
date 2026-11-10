@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://monsieureka.github.io/calcul-prix-gateau/sitemap.xml

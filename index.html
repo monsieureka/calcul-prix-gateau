@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calcul du prix d'un gâteau : calculateur gratuit (coût de revient, prix de vente) | Atelier Rentable</title>
+<meta name="description" content="Calculez gratuitement le coût de revient et le prix de vente de vos gâteaux : ingrédients, pertes, temps de travail, charges fixes et cotisations URSSAF. Diagnostic immédiat : OK, sous-facturé ou à perte.">
+<link rel="canonical" href="https://monsieureka.github.io/calcul-prix-gateau/">
+<meta property="og:url" content="https://monsieureka.github.io/calcul-prix-gateau/">
+<meta property="og:title" content="Calcul du prix d'un gâteau — calculateur gratuit">
+<meta property="og:description" content="Votre gâteau vous rapporte-t-il vraiment de l'argent ? Le calcul complet en 2 minutes.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<style>
+:root{
+  --vert:#244638; --vert-2:#2f5a48; --or:#B18A52; --ivoire:#F7F4EC; --papier:#fffdf8;
+  --texte:#1f2a25; --doux:#5d6b64; --ligne:#e3ddcf; --rouge:#b3412f; --orange:#b7791f; --ok:#2e7d4f;
+  --rayon:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ivoire);color:var(--texte);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+a{color:var(--vert)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{background:var(--vert);color:var(--ivoire)}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-top:12px;padding-bottom:12px}
+.marque{font-weight:700;letter-spacing:.02em}
+.marque span{color:var(--or)}
+.hero{padding:28px 0 8px}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:clamp(28px,4.4vw,42px);line-height:1.15;margin:0 0 10px;color:var(--vert)}
+.chapo{font-size:18px;color:var(--doux);max-width:720px;margin:0}
+.grille{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:start;margin:22px 0 30px}
+@media (max-width:860px){.grille{grid-template-columns:1fr}}
+.carte{background:var(--papier);border:1px solid var(--ligne);border-radius:var(--rayon);padding:18px}
+.carte h2{font-size:17px;margin:0 0 12px;color:var(--vert);display:flex;align-items:center;gap:8px}
+.carte h2 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--vert);color:var(--ivoire);font-size:13px}
+.carte + .carte{margin-top:14px}
+.champs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+@media (max-width:520px){.champs{grid-template-columns:1fr}}
+label{display:block;font-size:13.5px;font-weight:600;margin-bottom:4px}
+label small{font-weight:400;color:var(--doux)}
+input{width:100%;font:inherit;padding:9px 11px;border:1px solid #cfc7b4;border-radius:10px;background:#fff;color:var(--texte)}
+input:focus{outline:2px solid var(--or);outline-offset:1px;border-color:var(--or)}
+input.err{border-color:var(--rouge);background:#fff6f4}
+.aide{font-size:12.5px;color:var(--doux);margin-top:3px}
+table.ing{width:100%;border-collapse:collapse;font-size:14px}
+table.ing th{font-size:12px;text-align:left;color:var(--doux);font-weight:600;padding:0 4px 6px}
+table.ing td{padding:3px 4px;vertical-align:middle}
+table.ing td.cout{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--doux)}
+table.ing input{padding:7px 8px}
+.suppr{border:0;background:none;color:var(--doux);font-size:18px;cursor:pointer;padding:4px 6px;border-radius:8px}
+.suppr:hover{background:#efe9dc;color:var(--rouge)}
+@media (max-width:640px){
+  table.ing thead{display:none}
+  table.ing tr{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;padding:8px 0;border-bottom:1px solid var(--ligne)}
+  table.ing td:first-child{grid-column:1 / -1}
+  table.ing td.cout{grid-column:1 / 4;text-align:left}
+  table.ing td[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:var(--doux)}
+}
+.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:600;border-radius:10px;padding:9px 14px;cursor:pointer;border:1px solid var(--vert);background:#fff;color:var(--vert)}
+.btn:hover{background:#eef3f0}
+.btn.plein{background:var(--vert);color:var(--ivoire)}
+.btn.plein:hover{background:var(--vert-2)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.resultat{position:sticky;top:12px}
+@media (max-width:860px){.resultat{position:static}}
+.verdict{border-radius:12px;padding:14px 16px;margin-bottom:14px;color:#fff}
+.verdict .etiquette{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.9}
+.verdict .titre{font-size:22px;font-weight:700;margin:2px 0 4px}
+.verdict p{margin:0;font-size:14.5px}
+.v-perte{background:var(--rouge)} .v-sous{background:var(--orange)} .v-ok{background:var(--ok)} .v-neutre{background:var(--vert)}
+.chiffres{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chiffre{border:1px solid var(--ligne);border-radius:12px;padding:10px 12px;background:#fff}
+.chiffre .l{font-size:12.5px;color:var(--doux)}
+.chiffre .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--vert)}
+.chiffre.grand{grid-column:1 / -1;border-color:var(--or)}
+.chiffre.grand .v{font-size:30px}
+.barre{display:flex;height:14px;border-radius:8px;overflow:hidden;margin:14px 0 6px;background:#eee}
+.barre span{display:block;height:100%}
+.legende{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--doux)}
+.legende i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.detail{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.detail td{padding:5px 0;border-bottom:1px dashed var(--ligne)}
+.detail td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.detail tr.total td{font-weight:700;border-bottom:0;padding-top:8px}
+.cta{margin-top:16px;border-radius:12px;background:var(--vert);color:var(--ivoire);padding:16px}
+.cta h3{margin:0 0 6px;font-size:17px;color:#fff}
+.cta p{margin:0 0 10px;font-size:14px;opacity:.92}
+.cta a{display:inline-block;background:var(--or);color:#fff;text-decoration:none;font-weight:700;padding:10px 14px;border-radius:10px}
+.cta a:hover{filter:brightness(1.07)}
+section.contenu{padding:6px 0 30px}
+section.contenu h2{font-family:Georgia,serif;color:var(--vert);font-size:26px;margin:28px 0 10px}
+section.contenu h3{font-size:18px;margin:18px 0 6px;color:var(--vert)}
+section.contenu p, section.contenu li{max-width:760px}
+.formule{background:var(--papier);border-left:4px solid var(--or);padding:12px 14px;border-radius:0 10px 10px 0;max-width:760px;font-variant-numeric:tabular-nums}
+table.exemple{border-collapse:collapse;max-width:560px;width:100%;background:var(--papier);border:1px solid var(--ligne);border-radius:10px;overflow:hidden}
+table.exemple td,table.exemple th{padding:8px 12px;border-bottom:1px solid var(--ligne);text-align:left}
+table.exemple td:last-child,table.exemple th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+details{background:var(--papier);border:1px solid var(--ligne);border-radius:10px;padding:10px 14px;margin:8px 0;max-width:760px}
+details summary{font-weight:600;cursor:pointer}
+footer{background:#ebe5d6;color:var(--doux);font-size:13.5px;padding:20px 0 28px}
+footer p{margin:6px 0}
+.sr{position:absolute;left:-9999px}
+.copie-ok{font-size:13px;color:var(--ok);margin-left:6px}
+.mini{display:none}
+@media (max-width:860px){
+  .mini{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--vert);color:var(--ivoire);box-shadow:0 -4px 14px rgba(0,0,0,.15);font-size:14px}
+  .mini strong{font-size:18px}
+  .mini a{color:var(--ivoire);font-weight:700;white-space:nowrap}
+  .mini .pastille{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:700;margin-left:6px;background:var(--vert-2)}
+  .mini .pastille.v-perte{background:var(--rouge)} .mini .pastille.v-sous{background:var(--orange)} .mini .pastille.v-ok{background:var(--ok)}
+  footer{padding-bottom:84px}
+}
+@media print{.mini{display:none!important}header.top,.cta,.actions,section.contenu,footer{display:none}.grille{grid-template-columns:1fr}body{background:#fff}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebApplication","name":"Calculateur du prix d'un gâteau","applicationCategory":"BusinessApplication","operatingSystem":"Tous navigateurs","inLanguage":"fr-FR","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"description":"Calcule le coût de revient et le prix de vente d'un gâteau : ingrédients, pertes, temps de travail, charges fixes et cotisations URSSAF.","publisher":{"@type":"Organization","name":"Atelier Rentable"}},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Comment calculer le prix de vente d'un gâteau ?","acceptedAnswer":{"@type":"Answer","text":"Additionnez le coût des ingrédients (avec les pertes), votre temps de travail payé à votre taux horaire, la part de charges fixes par commande, l'emballage et le décor : c'est le coût de revient. Divisez-le ensuite par (1 − taux de cotisations − marge visée). Exemple : 59,70 € de coût de revient, 12,3 % de cotisations et 20 % de marge donnent 59,70 / 0,677 = 88,18 €, arrondi à 88,50 €."}},
+  {"@type":"Question","name":"Quel taux horaire compter pour une pâtissière à domicile ?","acceptedAnswer":{"@type":"Answer","text":"C'est le salaire horaire que vous voulez vous verser, avant cotisations. Ne mettez jamais 0 : le temps de préparation, de cuisson, de décor et de nettoyage est du travail. Le calculateur utilise 15 € par heure comme exemple, à remplacer par votre propre choix."}},
+  {"@type":"Question","name":"Quelles cotisations URSSAF pour une micro-entreprise de pâtisserie ?","acceptedAnswer":{"@type":"Answer","text":"La vente de gâteaux fabriqués relève en général de la vente de marchandises. Le calculateur propose 12,3 % du chiffre d'affaires à titre indicatif pour 2026. Vérifiez toujours votre taux exact sur autoentrepreneur.urssaf.fr, il dépend de votre activité et de vos options."}},
+  {"@type":"Question","name":"Pourquoi mon gâteau est-il « à perte » alors que je le vends plus cher que les ingrédients ?","acceptedAnswer":{"@type":"Answer","text":"Parce que les ingrédients ne sont qu'une petite partie du coût. Dans l'exemple du fraisier, les ingrédients coûtent 12,58 € mais le travail en coûte 37,50 €. Vendu 38 €, il fait perdre 26,37 € une fois les cotisations payées et le temps rémunéré."}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#B18A52"/><path d="M7 13.5l3 3 7-8" stroke="#F7F4EC" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="marque">Atelier <span>Rentable</span></div>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Calcul du prix d'un gâteau</h1>
+    <p class="chapo">Votre gâteau vous rapporte-t-il vraiment quelque chose ? Le calculateur additionne <strong>tout</strong> : ingrédients, pertes, temps de travail, charges fixes et cotisations URSSAF. Gratuit, sans inscription, rien n'est envoyé : tout reste dans votre navigateur.</p>
+  </div>
+
+  <div class="grille">
+    <form id="f" novalidate autocomplete="off" onsubmit="return false">
+      <div class="carte">
+        <h2><span class="n">1</span> Le gâteau</h2>
+        <div class="champs">
+          <div style="grid-column:1/-1"><label for="nom">Nom du gâteau</label><input id="nom" value="Fraisier"></div>
+          <div><label for="parts">Nombre de parts</label><input id="parts" inputmode="decimal" value="8"></div>
+          <div><label for="temps">Temps de travail <small>(minutes)</small></label><input id="temps" inputmode="decimal" value="150"><div class="aide">Préparation, cuisson, décor, nettoyage.</div></div>
+          <div><label for="emballage">Emballage <small>(€)</small></label><input id="emballage" inputmode="decimal" value="1,20"></div>
+          <div><label for="decor">Décor, extras <small>(€)</small></label><input id="decor" inputmode="decimal" value="3"></div>
+          <div><label for="pertes">Pertes <small>(%)</small></label><input id="pertes" inputmode="decimal" value="5"><div class="aide">Ratés, chutes, goûts. 5 % est prudent.</div></div>
+          <div><label for="prixActuel">Votre prix actuel <small>(€, facultatif)</small></label><input id="prixActuel" inputmode="decimal" value="38"></div>
+        </div>
+      </div>
+
+      <div class="carte">
+        <h2><span class="n">2</span> Les ingrédients</h2>
+        <p class="aide" style="margin:-6px 0 10px">Indiquez le prix payé et la quantité achetée (ex. farine : 1,20 € pour 1000 g), puis la quantité utilisée dans la recette. Même unité des deux côtés : g, ml ou pièce.</p>
+        <table class="ing">
+          <thead><tr><th>Ingrédient</th><th>Prix payé (€)</th><th>Qté achetée</th><th>Qté utilisée</th><th>Coût</th><th></th></tr></thead>
+          <tbody id="ings"></tbody>
+        </table>
+        <div class="actions">
+          <button type="button" class="btn" id="ajout">+ Ajouter un ingrédient</button>
+        </div>
+      </div>
+
+      <div class="carte">
+        <h2><span class="n">3</span> Vos réglages</h2>
+        <div class="champs">
+          <div><label for="taux">Taux horaire voulu <small>(€ / h)</small></label><input id="taux" inputmode="decimal" value="15"><div class="aide">Brut, avant cotisations. Jamais 0.</div></div>
+          <div><label for="cotis">Cotisations <small>(% du prix)</small></label><input id="cotis" inputmode="decimal" value="12,3"><div class="aide">Indicatif 2026, vente de biens. À vérifier sur urssaf.fr.</div></div>
+          <div><label for="vl">Versement libératoire <small>(%)</small></label><input id="vl" inputmode="decimal" value="0"><div class="aide">0 si vous n'avez pas cette option.</div></div>
+          <div><label for="marge">Marge visée <small>(% du prix)</small></label><input id="marge" inputmode="decimal" value="20"><div class="aide">En plus de votre salaire. 15 à 30 % est courant.</div></div>
+          <div><label for="fixes">Charges fixes <small>(€ / mois)</small></label><input id="fixes" inputmode="decimal" value="65"><div class="aide">Électricité du four, assurance, abonnements, petit matériel.</div></div>
+          <div><label for="commandes">Commandes par mois</label><input id="commandes" inputmode="decimal" value="12"><div class="aide">Pour répartir les charges fixes.</div></div>
+          <div><label for="arrondi">Arrondir au multiple de <small>(€)</small></label><input id="arrondi" inputmode="decimal" value="0,50"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="vider">Vider pour mon gâteau</button>
+          <button type="button" class="btn" id="exemple">Revoir l'exemple</button>
+        </div>
+      </div>
+    </form>
+
+    <aside class="resultat" id="resultat" aria-live="polite">
+      <div class="carte">
+        <div id="verdict" class="verdict v-neutre"><div class="etiquette">Diagnostic</div><div class="titre">—</div><p></p></div>
+        <div class="chiffres">
+          <div class="chiffre grand"><div class="l">Prix de vente conseillé</div><div class="v" id="rPrix">—</div></div>
+          <div class="chiffre"><div class="l">Coût de revient</div><div class="v" id="rCout">—</div></div>
+          <div class="chiffre"><div class="l">Prix par part</div><div class="v" id="rPart">—</div></div>
+          <div class="chiffre" style="grid-column:1/-1"><div class="l" id="rBenefL">Bénéfice réel à votre prix actuel</div><div class="v" id="rBenef">—</div></div>
+        </div>
+        <div class="barre" id="barre" aria-hidden="true"></div>
+        <div class="legende" id="legende"></div>
+        <table class="detail" id="detail"></table>
+        <div class="actions">
+          <button type="button" class="btn plein" id="copier">Copier le résultat</button>
+          <button type="button" class="btn" onclick="window.print()">Imprimer</button>
+          <span class="copie-ok" id="copieOk" hidden>Copié ✓</span>
+        </div>
+        <div class="cta">
+          <h3>Vous avez plusieurs gâteaux à chiffrer ?</h3>
+          <p>Le fichier Excel <strong>Juste Prix Pâtisserie</strong> fait ce calcul pour toutes vos recettes, garde vos prix d'ingrédients et prépare vos devis (parts, livraison, acompte).</p>
+          <a id="lienEtsy" href="https://www.etsy.com/listing/4599967801?utm_source=calculateur-gateau&amp;utm_medium=outil-gratuit&amp;utm_campaign=juste-prix-patisserie" rel="noopener">Voir le fichier sur Etsy →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="contenu">
+    <h2>Comment calculer le prix de vente d'un gâteau</h2>
+    <p><strong>Le prix juste couvre trois choses : ce que le gâteau vous coûte, votre salaire et vos cotisations.</strong> On calcule d'abord le coût de revient, puis on le « grossit » pour que les cotisations et la marge soient prélevées sur le prix et non sur votre poche.</p>
+    <div class="formule">
+      <strong>Coût de revient</strong> = ingrédients × (1 + pertes) + temps × taux horaire + charges fixes ÷ commandes du mois + emballage + décor<br>
+      <strong>Prix conseillé</strong> = coût de revient ÷ (1 − cotisations − versement libératoire − marge)
+    </div>
+
+    <h3>Exemple complet : le fraisier vendu 38 €</h3>
+    <table class="exemple">
+      <tr><th>Poste</th><th>Montant</th></tr>
+      <tr><td>Ingrédients (11,98 €) + 5 % de pertes</td><td>12,58 €</td></tr>
+      <tr><td>Travail : 2 h 30 à 15 € / h</td><td>37,50 €</td></tr>
+      <tr><td>Charges fixes : 65 € ÷ 12 commandes</td><td>5,42 €</td></tr>
+      <tr><td>Emballage + décor</td><td>4,20 €</td></tr>
+      <tr><th>Coût de revient</th><th>59,70 €</th></tr>
+      <tr><td>Prix conseillé : 59,70 ÷ (1 − 12,3 % − 20 %)</td><td>88,50 €</td></tr>
+      <tr><td>Bénéfice réel s'il est vendu 38 €</td><td style="color:var(--rouge)">−26,37 €</td></tr>
+    </table>
+    <p>Les ingrédients ne représentent qu'un cinquième du coût. <strong>C'est le temps de travail qui fait la différence</strong>, et c'est lui qu'on oublie le plus souvent.</p>
+
+    <h2>Questions fréquentes</h2>
+    <details><summary>Quel taux horaire compter quand on est pâtissière à domicile ?</summary><p>Le salaire horaire que vous voulez vous verser, avant cotisations. Comptez tout le temps passé : courses, préparation, cuisson, décor, nettoyage, échanges avec le client. 15 € / h est un exemple, pas une norme.</p></details>
+    <details><summary>Quel taux de cotisations URSSAF utiliser ?</summary><p>La vente de gâteaux que vous fabriquez relève en général de la vente de marchandises : 12,3 % du chiffre d'affaires à titre indicatif en 2026. Votre taux exact dépend de votre activité et de vos options (ACRE, versement libératoire) : vérifiez-le sur autoentrepreneur.urssaf.fr.</p></details>
+    <details><summary>Faut-il compter l'électricité du four ?</summary><p>Oui, dans les charges fixes du mois (la part professionnelle), avec l'assurance, les abonnements et le petit matériel. Le calculateur les répartit sur le nombre de commandes du mois.</p></details>
+    <details><summary>Pourquoi diviser au lieu d'ajouter un pourcentage ?</summary><p>Parce que les cotisations se calculent sur le prix de vente, pas sur le coût. Ajouter 32,3 % au coût donnerait un prix trop bas : il manquerait de l'argent une fois les cotisations payées.</p></details>
+    <details><summary>Mes données sont-elles enregistrées ?</summary><p>Elles restent uniquement dans votre navigateur, sur votre appareil, pour que vous retrouviez votre saisie. Rien n'est envoyé ni stocké ailleurs.</p></details>
+  </section>
+</main>
+
+<div class="mini" aria-hidden="true"><div>Prix conseillé <strong id="mPrix">—</strong><span class="pastille" id="mVerdict"></span></div><a href="#resultat">Détail ↓</a></div>
+
+<footer><div class="wrap">
+  <p><strong>Atelier Rentable</strong> · Votre savoir-faire mérite d'être rentable.</p>
+  <p>Outil de calcul fourni à titre indicatif. Il ne remplace pas un conseil comptable, fiscal ou juridique. Les taux de cotisations changent : vérifiez-les sur urssaf.fr.</p>
+  <p><strong>Mentions légales</strong> — Éditeur : <!-- À COMPLÉTER AVANT PUBLICATION --> [NOM], [statut], SIRET [SIRET], contact : [EMAIL]. Directeur de la publication : [NOM].</p>
+  <p>Hébergeur : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis. Ce site ne dépose aucun cookie et ne collecte aucune donnée personnelle.</p>
+</div></footer>
+
+<script>
+(function(){
+  "use strict";
+  var EXEMPLE = {
+    nom:"Fraisier", parts:"8", temps:"150", emballage:"1,20", decor:"3", pertes:"5", prixActuel:"38",
+    taux:"15", cotis:"12,3", vl:"0", marge:"20", fixes:"65", commandes:"12", arrondi:"0,50",
+    ings:[
+      ["Farine T45","1,20","1000","120"],["Sucre en poudre","1,35","1000","220"],["Œufs","3,20","12","6"],
+      ["Beurre doux","2,60","250","180"],["Lait entier","1,15","1000","250"],["Maïzena","1,60","400","25"],
+      ["Gousse de vanille","3,50","2","1"],["Fraises","4,50","500","500"],["Pâte à sucre","7,90","1000","80"],
+      ["Semelle carton","0,80","1","1"]
+    ]
+  };
+  var CHAMPS = ["nom","parts","temps","emballage","decor","pertes","prixActuel","taux","cotis","vl","marge","fixes","commandes","arrondi"];
+  var CLE = "atelier-rentable-prix-gateau-v1";
+  var $ = function(id){ return document.getElementById(id); };
+  var tbody = $("ings");
+
+  function nombre(s){
+    if (s === null || s === undefined) return NaN;
+    s = String(s).trim().replace(/\s/g,"").replace(/€|%/g,"").replace(",",".");
+    if (s === "") return NaN;
+    return /^-?\d*\.?\d+$/.test(s) ? parseFloat(s) : NaN;
+  }
+  function v(id, defaut){ var n = nombre($(id).value); return isNaN(n) ? defaut : n; }
+  var fmt = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR"});
+  function e(x){ return fmt.format(x); }
+  function plafond(x, pas){ return pas > 0 ? Math.ceil(Math.round(x / pas * 1e9) / 1e9) * pas : x; }
+
+  function ligne(d){
+    d = d || ["","","",""];
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><input aria-label="Ingrédient" placeholder="Ingrédient"></td>' +
+      '<td data-l="Prix payé (€)"><input aria-label="Prix payé en euros" inputmode="decimal"></td>' +
+      '<td data-l="Qté achetée"><input aria-label="Quantité achetée" inputmode="decimal"></td>' +
+      '<td data-l="Qté utilisée"><input aria-label="Quantité utilisée" inputmode="decimal"></td>' +
+      '<td class="cout">—</td>' +
+      '<td><button type="button" class="suppr" aria-label="Supprimer cet ingrédient">×</button></td>';
+    var ins = tr.querySelectorAll("input");
+    for (var i = 0; i < 4; i++) ins[i].value = d[i];
+    tr.querySelector(".suppr").addEventListener("click", function(){ tr.remove(); calculer(); });
+    tbody.appendChild(tr);
+    return tr;
+  }
+
+  function charger(d){
+    CHAMPS.forEach(function(k){ $(k).value = d[k] !== undefined ? d[k] : ""; });
+    tbody.innerHTML = "";
+    (d.ings && d.ings.length ? d.ings : [["","","",""]]).forEach(ligne);
+    calculer();
+  }
+
+  function etat(){
+    var d = {}; CHAMPS.forEach(function(k){ d[k] = $(k).value; });
+    d.ings = [].map.call(tbody.querySelectorAll("tr"), function(tr){
+      return [].map.call(tr.querySelectorAll("input"), function(i){ return i.value; });
+    });
+    return d;
+  }
+
+  function calculer(){
+    // Validation douce : on signale les saisies non numériques
+    CHAMPS.slice(1).forEach(function(k){
+      var el = $(k), t = el.value.trim();
+      el.classList.toggle("err", t !== "" && isNaN(nombre(t)));
+    });
+
+    var ingredients = 0;
+    [].forEach.call(tbody.querySelectorAll("tr"), function(tr){
+      var ins = tr.querySelectorAll("input");
+      var prix = nombre(ins[1].value), achete = nombre(ins[2].value), utilise = nombre(ins[3].value);
+      [1,2,3].forEach(function(i){ var t = ins[i].value.trim(); ins[i].classList.toggle("err", t !== "" && isNaN(nombre(t))); });
+      var c = (prix >= 0 && achete > 0 && utilise >= 0) ? prix / achete * utilise : NaN;
+      tr.querySelector(".cout").textContent = isNaN(c) ? "—" : e(c);
+      if (!isNaN(c)) ingredients += c;
+    });
+
+    var pertes = v("pertes",0)/100, temps = v("temps",0), taux = v("taux",0);
+    var emballage = v("emballage",0), decor = v("decor",0), parts = v("parts",0);
+    var cotis = v("cotis",0)/100, vl = v("vl",0)/100, marge = v("marge",0)/100;
+    var fixes = v("fixes",0), commandes = v("commandes",0), arrondi = v("arrondi",0);
+    var prixActuel = nombre($("prixActuel").value);
+
+    var ingAvecPertes = ingredients * (1 + pertes);
+    var travail = temps / 60 * taux;
+    var chargesCmd = commandes > 0 ? fixes / commandes : 0;
+    var cout = ingAvecPertes + travail + chargesCmd + emballage + decor;
+    var diviseur = 1 - cotis - vl - marge;
+    var prixBrut = diviseur > 0 ? cout / diviseur : NaN;
+    var prix = isNaN(prixBrut) ? NaN : plafond(prixBrut, arrondi);
+    var parPart = (parts > 0 && !isNaN(prix)) ? prix / parts : NaN;
+    var benef = !isNaN(prixActuel) ? prixActuel * (1 - cotis - vl) - cout : NaN;
+
+    $("rCout").textContent = e(cout);
+    $("rPrix").textContent = isNaN(prix) ? "Réglages ?" : e(prix);
+    $("rPart").textContent = isNaN(parPart) ? "—" : e(parPart);
+    $("rBenef").textContent = isNaN(benef) ? "—" : e(benef);
+    $("rBenef").style.color = isNaN(benef) ? "" : (benef < 0 ? "var(--rouge)" : "var(--ok)");
+
+    var vd = $("verdict"), titre = vd.querySelector(".titre"), p = vd.querySelector("p");
+    vd.className = "verdict";
+    if (isNaN(prix)) {
+      vd.classList.add("v-neutre"); titre.textContent = "Réglages à revoir";
+      p.textContent = "Cotisations + versement libératoire + marge dépassent 100 % du prix : baissez la marge visée.";
+    } else if (isNaN(prixActuel)) {
+      vd.classList.add("v-neutre"); titre.textContent = "Prix conseillé : " + e(prix);
+      p.textContent = "Indiquez votre prix actuel pour savoir s'il est rentable.";
+    } else if (benef < 0) {
+      vd.classList.add("v-perte"); titre.textContent = "À perte";
+      p.textContent = "À " + e(prixActuel) + ", chaque vente vous fait perdre " + e(-benef) + " une fois votre temps payé et les cotisations versées.";
+    } else if (prixActuel < prix) {
+      vd.classList.add("v-sous"); titre.textContent = "Sous-facturé";
+      p.textContent = "Votre temps est payé, mais il manque " + e(prix - prixActuel) + " pour atteindre la marge visée.";
+    } else {
+      vd.classList.add("v-ok"); titre.textContent = "Prix OK";
+      p.textContent = "Votre prix couvre le coût, votre salaire, les cotisations et la marge visée.";
+    }
+
+    $("mPrix").textContent = $("rPrix").textContent;
+    var mv = $("mVerdict"); mv.className = "pastille " + [].filter.call(vd.classList, function(c){ return c.indexOf("v-") === 0; }).join(" ");
+    mv.textContent = isNaN(prix) || isNaN(prixActuel) ? "" : titre.textContent;
+
+    // Répartition du prix conseillé
+    var base = isNaN(prix) ? cout : prix;
+    var cotisMontant = isNaN(prix) ? 0 : prix * (cotis + vl);
+    var reste = isNaN(prix) ? 0 : Math.max(0, prix - cout - cotisMontant);
+    var parts_ = [
+      ["Ingrédients", ingAvecPertes, "#B18A52"],
+      ["Votre travail", travail, "#244638"],
+      ["Charges fixes", chargesCmd, "#7d9a8c"],
+      ["Emballage, décor", emballage + decor, "#d8c4a0"],
+      ["Cotisations", cotisMontant, "#b3412f"],
+      ["Marge", reste, "#2e7d4f"]
+    ];
+    var barre = $("barre"), leg = $("legende");
+    barre.innerHTML = ""; leg.innerHTML = "";
+    parts_.forEach(function(x){
+      if (base <= 0 || x[1] <= 0) return;
+      var s = document.createElement("span"); s.style.width = (x[1]/base*100) + "%"; s.style.background = x[2]; s.title = x[0];
+      barre.appendChild(s);
+      var l = document.createElement("span"); l.innerHTML = '<i style="background:'+x[2]+'"></i>' + x[0] + " " + Math.round(x[1]/base*100) + " %";
+      leg.appendChild(l);
+    });
+
+    $("detail").innerHTML =
+      "<tr><td>Ingrédients" + (pertes ? " + " + String(Math.round(pertes*1000)/10).replace(".",",") + " % de pertes" : "") + "</td><td>" + e(ingAvecPertes) + "</td></tr>" +
+      "<tr><td>Travail (" + String(Math.round(temps)) + " min à " + e(taux) + " / h)</td><td>" + e(travail) + "</td></tr>" +
+      "<tr><td>Charges fixes par commande</td><td>" + e(chargesCmd) + "</td></tr>" +
+      "<tr><td>Emballage + décor</td><td>" + e(emballage + decor) + "</td></tr>" +
+      "<tr class='total'><td>Coût de revient</td><td>" + e(cout) + "</td></tr>";
+
+    try { localStorage.setItem(CLE, JSON.stringify(etat())); } catch (err) {}
+    return {cout:cout, prix:prix, parPart:parPart, benef:benef, ingredients:ingredients};
+  }
+
+  function texteResultat(){
+    var r = calculer(), nom = $("nom").value || "Mon gâteau";
+    return nom + "\nCoût de revient : " + e(r.cout) +
+      "\nPrix de vente conseillé : " + (isNaN(r.prix) ? "—" : e(r.prix)) +
+      (isNaN(r.parPart) ? "" : "\nPrix par part : " + e(r.parPart)) +
+      (isNaN(r.benef) ? "" : "\nBénéfice réel au prix actuel : " + e(r.benef)) +
+      "\n(calculé avec le calculateur gratuit Atelier Rentable)";
+  }
+
+  $("f").addEventListener("input", calculer);
+  $("ajout").addEventListener("click", function(){ ligne().querySelector("input").focus(); calculer(); });
+  $("exemple").addEventListener("click", function(){ charger(EXEMPLE); });
+  $("vider").addEventListener("click", function(){
+    var d = {}; CHAMPS.forEach(function(k){ d[k] = $(k).value; });
+    ["nom","parts","temps","emballage","decor","prixActuel"].forEach(function(k){ d[k] = ""; });
+    d.pertes = "5"; d.ings = [["","","",""],["","","",""],["","","",""]];
+    charger(d); $("nom").focus();
+  });
+  $("copier").addEventListener("click", function(){
+    var t = texteResultat(), ok = function(){ var c = $("copieOk"); c.hidden = false; setTimeout(function(){ c.hidden = true; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function(){ window.prompt("Copiez le résultat :", t); });
+    else window.prompt("Copiez le résultat :", t);
+  });
+
+  var sauve = null;
+  try { sauve = JSON.parse(localStorage.getItem(CLE) || "null"); } catch (err) { sauve = null; }
+  charger(sauve && sauve.ings ? sauve : EXEMPLE);
+
+  // Exposé pour les tests automatisés
+  window.__calculer = calculer; window.__charger = charger; window.__EXEMPLE = EXEMPLE;
+})();
+</script>
+</body>
+</html>
